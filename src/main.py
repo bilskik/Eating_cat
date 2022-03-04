@@ -1,4 +1,7 @@
+import pygame
 from tkinter import *
+
+
 
 
 class main_page_GUI():
@@ -35,7 +38,7 @@ class snake_gui():
     def __init__(self, window):
         self.window = window
     def setup(self):
-        new_window = Toplevel()
+       pass
 
 
 
