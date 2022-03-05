@@ -1,8 +1,5 @@
-import pygame
 from tkinter import *
-
-
-
+from snake_module import snake
 
 class main_page_GUI():
     def __init__(self):
@@ -22,7 +19,7 @@ class main_page_GUI():
         window.mainloop()
    
     def buttons(self,window):
-        game_but = Button(window, text = "Nowa gra", font=('Arial',40) , bg = "black" ,fg = 'white', activebackground= 'black', activeforeground='white' , command = lambda: snake_gui(window).setup())
+        game_but = Button(window, text = "Nowa gra", font=('Arial',40) , bg = "black" ,fg = 'white', activebackground= 'black', activeforeground='white' , command = lambda: snake(window).main_loop())
         game_but.place(x= 290 , y = 200)
 
         options_but = Button(window, text = "Opcje", font=('Arial',40) , bg = "black" ,fg = 'white', activebackground= 'black', activeforeground='white', command = lambda: self.create_options)
@@ -34,11 +31,7 @@ class main_page_GUI():
     def create_options(self):
         new_window = Toplevel()
 
-class snake_gui():
-    def __init__(self, window):
-        self.window = window
-    def setup(self):
-       pass
+
 
 
 
