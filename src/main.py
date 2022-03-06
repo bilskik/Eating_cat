@@ -7,10 +7,10 @@ class main_page_GUI():
     def set_up(self):
         window = Tk()
         window.geometry("800x600")
-        window.title("Snake.exe")
+        window.title("cat.exe")
         window.config(background="black")
-        label = Label(window, text="SNAKE", font=('Arial',40), fg = "green", bg = "black")
-        label.place(x = 320, y = 25)
+        label = Label(window, text="Jedzacy kot", font=('Arial',40), fg = "green", bg = "black")
+        label.place(x = 280, y = 25)
 
         photo=PhotoImage(file= "2.png")
         photo_label = Label(image=photo)
