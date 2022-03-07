@@ -2,13 +2,14 @@ import pygame
 from tkinter import *
 import os.path
 import random
+from main import *
 
 WIDTH, HEIGHT = 600, 600
 board_width,board_height = 570,570
 CAT_SIZE = 30
 FPS = 60
 VEL = 4
-VEL_OBJECT = 10
+VEL_OBJECT = 2
 BLACK = (0,0,0)
 WHITE = (255,255,255)
 RED= (255,0,0)
@@ -18,8 +19,8 @@ direction = ""
 
 class cat():
 
-    def __init__(self, window):
-        self.window = window
+    def __init__(self):
+       pass
     def main_loop(self):
         win = pygame.display.set_mode((WIDTH, HEIGHT))
 
@@ -50,28 +51,23 @@ class cat():
         clock = pygame.time.Clock()
         global run
         run = True
+        checker = 0
         while run:
             clock.tick(FPS)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
+                    checker = 1
 
             key_pressed = pygame.key.get_pressed()
             self.moving(head, key_pressed)
             self.object_move(apple_rect, banana_rect, bomb_rect)
             self.draw(cat, win, head, border_top,border_down,border_right,border_left,apple, apple_rect,banana, banana_rect, bomb,bomb_rect)
 
-
-        score = Tk()
-        score.geometry('300x300')
-        score.config(background='black')
-        label = Label(score, text = "Wynik punktowy: ",  font=('Arial',20), fg = "white", bg = "black")
-        label.place(x = 30, y = 30)
-
-        quit_but = Button(score, text = "Zagraj ponownie", font=('Arial',20) ,fg = 'white', bg = "black" , activebackground= 'black', activeforeground='white' , command = lambda: cat(window).main_loop())
-        #quit_but.place(x = 30 , y = 130)
-
-        pygame.quit()
+        if checker == 0:
+            final_win_GUI().main()
+        else:
+            pygame.quit()
 
     def draw(self, cat, win, head, border_top,border_down,border_right,border_left, apple, apple_rect,banana,banana_rect, bomb, bomb_rect):
 
@@ -128,8 +124,10 @@ class cat():
             head.x += VEL
         elif direction == 'left':
             head.x -= VEL
+    #def check_difficulty(self):
+
     def object_move(self, apple_rect, banana_rect, bomb_rect):
-        #self.apple_coor(apple_rect)
+       # self.check_difficulty()
         apple_rect.y += VEL_OBJECT
         banana_rect.y += VEL_OBJECT
         bomb_rect.y += VEL_OBJECT
@@ -166,6 +164,29 @@ class cat():
            # print("not touch")
             return 0
 
+class final_win_GUI():
+    def __init__(self):
+        pass
+    def main(self):
+        score = Tk()
+        score.geometry('300x300')
+        score.config(background='black')
+        label = Label(score, text="Wynik punktowy: ", font=('Arial', 20), fg="white", bg="black")
+        label.place(x=30, y=30)
 
+        play_again_but = Button(score, text="Zagraj ponownie", font=('Arial', 20), fg='white', bg="black",activebackground='black', activeforeground='white', command = lambda : self.close_func(score,0) )
+        play_again_but.place(x = 30 , y = 130)
+
+        quit_but = Button(score, text = "Wyjdź do głównego menu" , font = ('Arial',20) , fg = 'white', bg = 'black', activebackground = 'black' , activeforeground = 'white', command = lambda : self.close_func(score,1))
+        quit_but.place(x = 30, y = 230)
+        score.mainloop()
+    def close_func(self, score, checker):
+        if checker == 0:
+            score.destroy()
+            pygame.quit()
+            cat().main_loop()
+        else:
+            score.destroy()
+            pygame.quit()
 
 

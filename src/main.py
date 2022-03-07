@@ -1,5 +1,9 @@
 from tkinter import *
-from cat_module import cat
+from cat_module import *
+from PIL import Image, ImageTk
+
+
+difficulty = 'easy'
 
 class main_page_GUI():
     def __init__(self):
@@ -8,28 +12,51 @@ class main_page_GUI():
         window = Tk()
         window.geometry("800x600")
         window.title("cat.exe")
-        window.config(background="black")
-        label = Label(window, text="Jedzacy kot", font=('Arial',40), fg = "green", bg = "black")
-        label.place(x = 280, y = 25)
+        back_photo = (Image.open('cat_background.png'))
+        resized_back_photo = back_photo.resize((800,600), Image.ANTIALIAS)
+        new_image = ImageTk.PhotoImage(resized_back_photo)
+        main_label = Label(image = new_image)
+        main_label.place(x = 0 , y = 0)
 
-        photo=PhotoImage(file= "2.png")
-        photo_label = Label(image=photo)
-        photo_label.place(x =350 , y = 100)
-        self.buttons(window)
+
+        self.buttons(window, new_image)
         window.mainloop()
    
-    def buttons(self,window):
-        game_but = Button(window, text = "Nowa gra", font=('Arial',40) , bg = "black" ,fg = 'white', activebackground= 'black', activeforeground='white' , command = lambda: cat(window).main_loop())
+    def buttons(self,window, new_image):
+        game_but = Button(window, text = "Nowa gra", font=('Arial',40)  ,bg = 'black',  fg = 'white',  command = lambda: cat().main_loop())
         game_but.place(x= 290 , y = 200)
 
-        options_but = Button(window, text = "Opcje", font=('Arial',40) , bg = "black" ,fg = 'white', activebackground= 'black', activeforeground='white', command = lambda: self.create_options)
+        options_but = Button(window, text = "Opcje", font=('Arial',40) , bg = "black" ,fg = 'white', command = lambda: self.create_options())
         options_but.place(x= 340 , y = 300)
 
-        quit_but = Button(window, text = "Wyjście", font=('Arial',40) , bg = "black" ,fg = 'white', activebackground= 'black', activeforeground='white' , command = lambda: window.destroy())
+        quit_but = Button(window, text = "Wyjście", font=('Arial',40) , bg = "black" ,fg = 'white',  command = lambda: window.destroy())
         quit_but.place(x= 315 , y = 400)
 
     def create_options(self):
-        new_window = Toplevel()
+        options_win = Toplevel()
+        options_win.geometry('400x300')
+        options_win.config(background='grey')
+        options_win.title('opcje')
+
+        back_button = Button(options_win, text = "Powrót", font = ('Arial', 20), bg = 'black', fg = 'white', command  = lambda : options_win.destroy())
+        back_button.place(x = 150, y = 0)
+
+        label_difficulty = Label(options_win,text = 'Poziom trudności:' ,font = ('Arial', 20), bg = 'black', fg = 'white')
+        label_difficulty.place(x = 90, y = 70)
+
+        mode_button = Button(options_win, text="łatwy", font=('Arial', 20), bg='black', fg='white',
+                             command=lambda: self.changeText(mode_button))
+        mode_button.place(x = 150, y = 110)
+        
+    def changeText(self, mode_button):
+        if mode_button['text'] == 'łatwy':
+            mode_button['text'] = 'trudny'
+        else:
+            mode_button['text'] = 'łatwy'
+
+
+
+
 
 
 
