@@ -1,5 +1,5 @@
 from tkinter import *
-from snake_module import snake
+from cat_module import cat
 
 class main_page_GUI():
     def __init__(self):
@@ -19,7 +19,7 @@ class main_page_GUI():
         window.mainloop()
    
     def buttons(self,window):
-        game_but = Button(window, text = "Nowa gra", font=('Arial',40) , bg = "black" ,fg = 'white', activebackground= 'black', activeforeground='white' , command = lambda: snake(window).main_loop())
+        game_but = Button(window, text = "Nowa gra", font=('Arial',40) , bg = "black" ,fg = 'white', activebackground= 'black', activeforeground='white' , command = lambda: cat(window).main_loop())
         game_but.place(x= 290 , y = 200)
 
         options_but = Button(window, text = "Opcje", font=('Arial',40) , bg = "black" ,fg = 'white', activebackground= 'black', activeforeground='white', command = lambda: self.create_options)
