@@ -3,7 +3,7 @@ from cat_module import *
 from PIL import Image, ImageTk
 
 
-difficulty = 'easy'
+difficulty = ' '
 
 class main_page_GUI():
     def __init__(self):
@@ -33,26 +33,38 @@ class main_page_GUI():
         quit_but.place(x= 315 , y = 400)
 
     def create_options(self):
+        global difficulty
         options_win = Toplevel()
         options_win.geometry('400x300')
         options_win.config(background='grey')
         options_win.title('opcje')
 
-        back_button = Button(options_win, text = "Powrót", font = ('Arial', 20), bg = 'black', fg = 'white', command  = lambda : options_win.destroy())
+        back_button = Button(options_win, text = "Powrót", font = ('Arial', 20), bg = 'black', fg = 'white',
+                             command  = lambda : options_win.destroy())
         back_button.place(x = 150, y = 0)
 
-        label_difficulty = Label(options_win,text = 'Poziom trudności:' ,font = ('Arial', 20), bg = 'black', fg = 'white')
+        label_difficulty = Label(options_win,text = 'Poziom trudności:' ,
+                                 font = ('Arial', 20), bg = 'black', fg = 'white')
+
         label_difficulty.place(x = 90, y = 70)
 
+        print(difficulty)
         mode_button = Button(options_win, text="łatwy", font=('Arial', 20), bg='black', fg='white',
                              command=lambda: self.changeText(mode_button))
+
+
         mode_button.place(x = 150, y = 110)
         
     def changeText(self, mode_button):
+        global difficulty
         if mode_button['text'] == 'łatwy':
+            difficulty = 'hard'
             mode_button['text'] = 'trudny'
         else:
+            difficulty = 'easy'
             mode_button['text'] = 'łatwy'
+
+
 
 
 

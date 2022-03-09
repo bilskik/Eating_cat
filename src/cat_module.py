@@ -4,24 +4,32 @@ import os.path
 import random
 from main import *
 
+pygame.init()
 WIDTH, HEIGHT = 600, 600
 board_width,board_height = 570,570
-CAT_SIZE = 30
+CAT_SIZE = 45
 FPS = 60
-VEL = 4
+VEL = 7
 VEL_OBJECT = 2
+HEALTH_FONT = pygame.font.SysFont('comicsans', 40)
 BLACK = (0,0,0)
 WHITE = (255,255,255)
 RED= (255,0,0)
 GREEN = (0,250,0)
+LIVE_COUNTER = 5
+SCORE = 0
+SCORE_FONT = pygame.font.SysFont('comicsans', 40)
 
-direction = ""
+
 
 class cat():
 
     def __init__(self):
        pass
     def main_loop(self):
+
+        global LIVE_COUNTER
+
         win = pygame.display.set_mode((WIDTH, HEIGHT))
 
         cat_image = pygame.image.load(os.path.join('images','cat.png'))
@@ -33,10 +41,18 @@ class cat():
         banana_image = pygame.image.load(os.path.join('images', 'banana.png'))
         banana = pygame.transform.scale(banana_image,(CAT_SIZE,CAT_SIZE))
 
+        cookies_image = pygame.image.load(os.path.join('images', 'cookies.png'))
+        cookies = pygame.transform.scale(cookies_image,(CAT_SIZE, CAT_SIZE))
+
+        shake_image = pygame.image.load(os.path.join('images', 'shake.png'))
+        shake = pygame.transform.scale(shake_image,(CAT_SIZE,CAT_SIZE))
+
         bomb_image = pygame.image.load(os.path.join('images', 'bomb.png'))
         bomb = pygame.transform.scale(bomb_image,(CAT_SIZE, CAT_SIZE))
 
 
+        shake_rect = pygame.Rect(150,150,CAT_SIZE,CAT_SIZE)
+        cookies_rect = pygame.Rect(200,200,CAT_SIZE,CAT_SIZE)
         bomb_rect = pygame.Rect(100,100, CAT_SIZE, CAT_SIZE)
         banana_rect = pygame.Rect(60,60,CAT_SIZE,CAT_SIZE)
         apple_rect = pygame.Rect(30, 30,CAT_SIZE,CAT_SIZE)
@@ -45,8 +61,9 @@ class cat():
 
         border_left = pygame.Rect(0,0,30,HEIGHT)
         border_top = pygame.Rect(0,0,WIDTH,30)
-        border_right = pygame.Rect(WIDTH-30,0,WIDTH,HEIGHT)
-        border_down = pygame.Rect(0,HEIGHT-30,WIDTH,HEIGHT)
+        border_right = pygame.Rect(WIDTH-30,0,WIDTH, HEIGHT)
+        border_down = pygame.Rect(0,HEIGHT-5,WIDTH, HEIGHT)
+
 
         clock = pygame.time.Clock()
         global run
@@ -60,16 +77,22 @@ class cat():
                     checker = 1
 
             key_pressed = pygame.key.get_pressed()
-            self.moving(head, key_pressed)
-            self.object_move(apple_rect, banana_rect, bomb_rect)
-            self.draw(cat, win, head, border_top,border_down,border_right,border_left,apple, apple_rect,banana, banana_rect, bomb,bomb_rect)
+            self.moving(head, key_pressed,border_top, border_down, border_right, border_left)
+            self.object_move(apple_rect, banana_rect, bomb_rect, cookies_rect, shake_rect)
+            self.draw(cat, win, head, border_top,border_down,border_right,border_left,apple, apple_rect,banana,
+                      banana_rect, bomb, bomb_rect, cookies, cookies_rect,shake,shake_rect)
+
+            if LIVE_COUNTER == 0:
+                run = False
+
 
         if checker == 0:
             final_win_GUI().main()
         else:
             pygame.quit()
 
-    def draw(self, cat, win, head, border_top,border_down,border_right,border_left, apple, apple_rect,banana,banana_rect, bomb, bomb_rect):
+    def draw(self, cat, win, head, border_top,border_down,border_right,border_left, apple, apple_rect,banana,banana_rect,
+             bomb, bomb_rect, cookies,cookies_rect,shake,shake_rect):
 
         win.fill(WHITE)
 
@@ -78,91 +101,142 @@ class cat():
         pygame.draw.rect(win,GREEN,border_left)
         pygame.draw.rect(win,GREEN,border_right)
 
-        if self.object_check(head,apple_rect,banana_rect, bomb_rect) == 1:
-            self.apple_coor(apple_rect,banana_rect,bomb_rect, 1 )
+        checker = self.object_check(head,border_down,apple_rect,banana_rect, bomb_rect, cookies_rect, shake_rect)
+
+        if checker == 1:
+            self.apple_coor(apple_rect,banana_rect,bomb_rect, cookies_rect, shake_rect, 1 )
             win.blit(apple, (apple_rect.x, apple_rect.y))
             win.blit(banana,(banana_rect.x, banana_rect.y))
             win.blit(bomb, (bomb_rect.x, bomb_rect.y))
+            win.blit(cookies, (cookies_rect.x, cookies_rect.y))
+            win.blit(shake, (shake_rect.x, shake_rect.y))
 
-        elif self.object_check(head,apple_rect,banana_rect, bomb_rect) == 2:
-            self.apple_coor(apple_rect,banana_rect,bomb_rect, 2)
+
+        elif checker == 2:
+            self.apple_coor(apple_rect,banana_rect,bomb_rect, cookies_rect, shake_rect, 2)
             win.blit(apple, (apple_rect.x, apple_rect.y))
             win.blit(banana, (banana_rect.x, banana_rect.y))
             win.blit(bomb, (bomb_rect.x, bomb_rect.y))
-        elif self.object_check(head,apple_rect,banana_rect, bomb_rect) == 3:
-            self.apple_coor(apple_rect,banana_rect,bomb_rect, 3)
+            win.blit(cookies, (cookies_rect.x, cookies_rect.y))
+            win.blit(shake, (shake_rect.x, shake_rect.y))
+
+        elif checker == 3:
+            self.apple_coor(apple_rect,banana_rect,bomb_rect,cookies_rect, shake_rect,  3)
             win.blit(apple, (apple_rect.x, apple_rect.y))
             win.blit(banana, (banana_rect.x, banana_rect.y))
             win.blit(bomb, (bomb_rect.x, bomb_rect.y))
+            win.blit(cookies, (cookies_rect.x, cookies_rect.y))
+            win.blit(shake, (shake_rect.x, shake_rect.y))
+
+        elif checker == 4:
+            self.apple_coor(apple_rect, banana_rect, bomb_rect, cookies_rect, shake_rect, 4)
+            win.blit(apple, (apple_rect.x, apple_rect.y))
+            win.blit(banana, (banana_rect.x, banana_rect.y))
+            win.blit(bomb, (bomb_rect.x, bomb_rect.y))
+            win.blit(cookies, (cookies_rect.x, cookies_rect.y))
+            win.blit(shake, (shake_rect.x, shake_rect.y))
+
+
+        elif checker == 5:
+            self.apple_coor(apple_rect, banana_rect, bomb_rect, cookies_rect, shake_rect, 5)
+            win.blit(apple, (apple_rect.x, apple_rect.y))
+            win.blit(banana, (banana_rect.x, banana_rect.y))
+            win.blit(bomb, (bomb_rect.x, bomb_rect.y))
+            win.blit(cookies, (cookies_rect.x, cookies_rect.y))
+            win.blit(shake, (shake_rect.x, shake_rect.y))
+
+
         else:
-            win.blit(apple,(apple_rect.x,apple_rect.y))
-            win.blit(banana,(banana_rect.x, banana_rect.y))
+            win.blit(apple, (apple_rect.x,apple_rect.y))
+            win.blit(banana, (banana_rect.x, banana_rect.y))
             win.blit(bomb, (bomb_rect.x, bomb_rect.y))
+            win.blit(cookies, (cookies_rect.x, cookies_rect.y))
+            win.blit(shake, (shake_rect.x, shake_rect.y))
 
+        health_text = HEALTH_FONT.render("Życia: " + str(LIVE_COUNTER), 1, BLACK)
+        win.blit(health_text, (WIDTH - health_text.get_width() - 10, 5))
 
-        win.blit(cat,(head.x,head.y))
+        score_text = SCORE_FONT.render("Punkty: " + str(SCORE), 1 , BLACK)
+        win.blit(score_text, (10, 5))
+
+        win.blit(cat, (head.x,head.y))
         pygame.display.update()
 
-    def moving(self, head, key_pressed):
+    def moving(self, head, key_pressed, border_top, border_down, border_right, border_left):
 
-        global direction
-
-        if key_pressed[pygame.K_UP] :  # up and head.y - head.height > border_top.y
-            direction = "up"
-        elif key_pressed[pygame.K_DOWN] :  # down and head.y + head.height < border_down.y
-            direction = "down"
-        elif key_pressed[pygame.K_RIGHT]:   # right and head.x  + head.width < border_right.x
-            direction = 'right'
-        elif key_pressed[pygame.K_LEFT]:   #left and head.x  - head.width > border_left.x
-            direction = 'left'
-
-        if direction == 'up':
+        if key_pressed[pygame.K_UP] and head.y - head.height > border_top.y :  # up
             head.y -= VEL
-        elif direction == 'down':
+        elif key_pressed[pygame.K_DOWN] and head.y + head.height < border_down.y:  # down
             head.y += VEL
-        elif direction == 'right':
+        elif key_pressed[pygame.K_RIGHT] and head.x + head.width < border_right.x:   # right
             head.x += VEL
-        elif direction == 'left':
+        elif key_pressed[pygame.K_LEFT] and head.x - head.width > border_left.x:   #left
             head.x -= VEL
-    #def check_difficulty(self):
 
-    def object_move(self, apple_rect, banana_rect, bomb_rect):
-       # self.check_difficulty()
+    def object_move(self, apple_rect, banana_rect, bomb_rect, cookies_rect, shake_rect):
+
         apple_rect.y += VEL_OBJECT
         banana_rect.y += VEL_OBJECT
         bomb_rect.y += VEL_OBJECT
+        cookies_rect.y += VEL_OBJECT
+        shake_rect.y += VEL_OBJECT
 
-    def apple_coor(self, apple_rect, banana_rect, bomb_rect, checker):
+
+    def apple_coor(self, apple_rect, banana_rect, bomb_rect, cookies_rect, shake_rect, checker):
         if checker == 1:
-            apple_rect.x = random.randrange(30, 570)
+            apple_rect.x = random.randrange(60, 540)
             apple_rect.y = 30
         elif checker == 2:
-            banana_rect.x = random.randrange(30, 570)
+            banana_rect.x = random.randrange(60, 540)
             banana_rect.y = 30
         elif checker == 3:
-            bomb_rect.x = random.randrange(30,570)
+            bomb_rect.x = random.randrange(60, 540)
             bomb_rect.y = 30
+        elif checker == 4:
+            cookies_rect.x = random.randrange(60, 540)
+            cookies_rect.y = 30
+        elif checker == 5:
+            shake_rect.x = random.randrange(60, 540)
+            shake_rect.y = 30
 
 
-    def object_check(self,head,apple_rect, banana_rect, bomb_rect):
-        global run
-        if apple_rect.y == HEIGHT:
-            run = False
-        elif banana_rect.y == HEIGHT:
-            run = False
-        elif bomb_rect.y == HEIGHT:
-            self.apple_coor(apple_rect, banana_rect, bomb_rect, 3)
+    def object_check(self,head,border_down, apple_rect, banana_rect, bomb_rect, cookies_rect, shake_rect):
+        global LIVE_COUNTER
+        global SCORE
+
+        if apple_rect.colliderect(border_down):
+            LIVE_COUNTER -= 1
+            return 1
+        elif banana_rect.colliderect(border_down):
+            LIVE_COUNTER -= 1
+            return 2
+        elif cookies_rect.colliderect(border_down):
+            LIVE_COUNTER -= 1
+            return 4
+        elif shake_rect.colliderect(border_down):
+            LIVE_COUNTER -= 1
+            return 5
+        elif bomb_rect.colliderect(border_down):
+            self.apple_coor(apple_rect, banana_rect, bomb_rect,cookies_rect,shake_rect, 3)
 
         if head.colliderect(apple_rect):
-            #print("touch")
+            SCORE += 1
             return 1
         elif head.colliderect(banana_rect):
+            SCORE += 1
             return 2
         elif head.colliderect(bomb_rect):
+            LIVE_COUNTER -= 1
             return 3
+        elif head.colliderect(cookies_rect):
+            SCORE += 1
+            return 4
+        elif head.colliderect(shake_rect):
+            SCORE += 1
+            return 5
         else:
-           # print("not touch")
             return 0
+
 
 class final_win_GUI():
     def __init__(self):
