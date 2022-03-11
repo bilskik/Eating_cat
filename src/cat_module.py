@@ -16,7 +16,7 @@ BLACK = (0,0,0)
 WHITE = (255,255,255)
 RED= (255,0,0)
 GREEN = (0,250,0)
-LIVE_COUNTER = 5
+LIVE_COUNTER = 3
 SCORE = 0
 SCORE_FONT = pygame.font.SysFont('comicsans', 40)
 
@@ -24,13 +24,25 @@ SCORE_FONT = pygame.font.SysFont('comicsans', 40)
 
 class cat():
 
-    def __init__(self):
-       pass
+    def __init__(self, difficulty):
+       self.dif = difficulty
     def main_loop(self):
-
         global LIVE_COUNTER
+        global SCORE
+        global VEL
+        global VEL_OBJECT
+        pygame.init()
+        if self.dif == 'easy':
+            VEL = 8
+            VEL_OBJECT = 2
+            LIVE_COUNTER = 8
+        elif self.dif == 'hard':
+            VEL = 10
+            VEL_OBJECT = 4
+            LIVE_COUNTER = 5
 
         win = pygame.display.set_mode((WIDTH, HEIGHT))
+        print('test1')
 
         cat_image = pygame.image.load(os.path.join('images','cat.png'))
         cat = pygame.transform.scale(cat_image, (CAT_SIZE, CAT_SIZE))
@@ -64,7 +76,7 @@ class cat():
         border_right = pygame.Rect(WIDTH-30,0,WIDTH, HEIGHT)
         border_down = pygame.Rect(0,HEIGHT-5,WIDTH, HEIGHT)
 
-
+        SCORE = 0
         clock = pygame.time.Clock()
         global run
         run = True
@@ -244,15 +256,19 @@ class final_win_GUI():
     def main(self):
         score = Tk()
         score.geometry('300x300')
-        score.config(background='black')
-        label = Label(score, text="Wynik punktowy: ", font=('Arial', 20), fg="white", bg="black")
-        label.place(x=30, y=30)
+        score.title('koniec')
+        score.config(background='white')
+        label = Label(score, text="Wynik punktowy:", font=('Arial', 20), fg="black", bg = "white")
+        label.place(x=50, y=20)
 
-        play_again_but = Button(score, text="Zagraj ponownie", font=('Arial', 20), fg='white', bg="black",activebackground='black', activeforeground='white', command = lambda : self.close_func(score,0) )
-        play_again_but.place(x = 30 , y = 130)
+        point_label = Label(score, text = str(SCORE), font= ('Arial', 20), fg = 'black', bg = 'white')
+        point_label.place(x=145, y=50)
 
-        quit_but = Button(score, text = "Wyjdź do głównego menu" , font = ('Arial',20) , fg = 'white', bg = 'black', activebackground = 'black' , activeforeground = 'white', command = lambda : self.close_func(score,1))
-        quit_but.place(x = 30, y = 230)
+        play_again_but = Button(score, text="Zagraj ponownie", font=('Arial', 20), fg='white', bg="black",  command = lambda : self.close_func(score,0) )
+        play_again_but.place(x = 35 , y = 130)
+
+        quit_but = Button(score, text = "Wyjdź do menu" , font = ('Arial',20) , fg = 'white' , bg = 'black', command = lambda : self.close_func(score,1))
+        quit_but.place(x = 45, y = 180)
         score.mainloop()
     def close_func(self, score, checker):
         if checker == 0:
