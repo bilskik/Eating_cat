@@ -19,7 +19,7 @@ GREEN = (0,250,0)
 LIVE_COUNTER = 3
 SCORE = 0
 SCORE_FONT = pygame.font.SysFont('comicsans', 40)
-
+STARTING_Y = 30
 
 
 class cat():
@@ -31,18 +31,20 @@ class cat():
         global SCORE
         global VEL
         global VEL_OBJECT
+        global HEALTH_FONT
         pygame.init()
+        HEALTH_FONT = pygame.font.SysFont('comicsans', 40)
         if self.dif == 'easy':
             VEL = 8
             VEL_OBJECT = 2
-            LIVE_COUNTER = 8
+            LIVE_COUNTER = 30
         elif self.dif == 'hard':
             VEL = 10
             VEL_OBJECT = 4
-            LIVE_COUNTER = 5
+            LIVE_COUNTER = 10
 
         win = pygame.display.set_mode((WIDTH, HEIGHT))
-        print('test1')
+
 
         cat_image = pygame.image.load(os.path.join('images','cat.png'))
         cat = pygame.transform.scale(cat_image, (CAT_SIZE, CAT_SIZE))
@@ -63,12 +65,13 @@ class cat():
         bomb = pygame.transform.scale(bomb_image,(CAT_SIZE, CAT_SIZE))
 
 
-        shake_rect = pygame.Rect(150,150,CAT_SIZE,CAT_SIZE)
-        cookies_rect = pygame.Rect(200,200,CAT_SIZE,CAT_SIZE)
-        bomb_rect = pygame.Rect(100,100, CAT_SIZE, CAT_SIZE)
-        banana_rect = pygame.Rect(60,60,CAT_SIZE,CAT_SIZE)
-        apple_rect = pygame.Rect(30, 30,CAT_SIZE,CAT_SIZE)
+        shake_rect = pygame.Rect(self.starting_positions(),STARTING_Y,CAT_SIZE,CAT_SIZE)
+        cookies_rect = pygame.Rect(self.starting_positions(),STARTING_Y,CAT_SIZE,CAT_SIZE)
+        bomb_rect = pygame.Rect(self.starting_positions(),STARTING_Y, CAT_SIZE, CAT_SIZE)
+        banana_rect = pygame.Rect(self.starting_positions(),STARTING_Y,CAT_SIZE,CAT_SIZE)
+        apple_rect = pygame.Rect(self.starting_positions(), STARTING_Y,CAT_SIZE,CAT_SIZE)
         head = pygame.Rect(300,300, CAT_SIZE,CAT_SIZE)
+
 
 
         border_left = pygame.Rect(0,0,30,HEIGHT)
@@ -99,9 +102,11 @@ class cat():
 
 
         if checker == 0:
-            final_win_GUI().main()
+            final_win_GUI(self.dif).main()
         else:
             pygame.quit()
+        pygame.display.quit()
+        pygame.quit()
 
     def draw(self, cat, win, head, border_top,border_down,border_right,border_left, apple, apple_rect,banana,banana_rect,
              bomb, bomb_rect, cookies,cookies_rect,shake,shake_rect):
@@ -248,11 +253,15 @@ class cat():
             return 5
         else:
             return 0
+    def starting_positions(self):
+        a = random.random()
+        random.seed(a)
+        return random.randint(60,540)
 
 
 class final_win_GUI():
-    def __init__(self):
-        pass
+    def __init__(self, dif):
+        self.dif = dif
     def main(self):
         score = Tk()
         score.geometry('300x300')
@@ -267,16 +276,16 @@ class final_win_GUI():
         play_again_but = Button(score, text="Zagraj ponownie", font=('Arial', 20), fg='white', bg="black",  command = lambda : self.close_func(score,0) )
         play_again_but.place(x = 35 , y = 130)
 
-        quit_but = Button(score, text = "Wyjdź do menu" , font = ('Arial',20) , fg = 'white' , bg = 'black', command = lambda : self.close_func(score,1))
-        quit_but.place(x = 45, y = 180)
+        quit_but = Button(score, text = "Wyjdź z gry" , font = ('Arial',20) , fg = 'white' , bg = 'black', command = lambda : self.close_func(score,1))
+        quit_but.place(x = 70, y = 180)
         score.mainloop()
     def close_func(self, score, checker):
         if checker == 0:
             score.destroy()
-            pygame.quit()
-            cat().main_loop()
+            cat(self.dif).main_loop()
         else:
             score.destroy()
-            pygame.quit()
+            exit()
+
 
 
