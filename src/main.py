@@ -13,7 +13,7 @@ class main_page_GUI():
         window = Tk()
         window.geometry("800x600")
         window.title("cat.exe")
-        back_photo = (Image.open('cat_background.png'))
+        back_photo = (Image.open('images/cat_background.png'))
         resized_back_photo = back_photo.resize((800,600), Image.ANTIALIAS)
         new_image = ImageTk.PhotoImage(resized_back_photo)
         main_label = Label(window, image = new_image)
@@ -39,7 +39,7 @@ class main_page_GUI():
     def create_options(self):
         options_win = Toplevel()
         options_win.geometry('400x300')
-        new_image = tkinter.PhotoImage(file='options.png')
+        new_image = tkinter.PhotoImage(file='images/options.png')
         main_canvas = Canvas(options_win, width=400, height=300)
         main_canvas.pack()
         main_canvas.create_image(138,160,image=new_image)
